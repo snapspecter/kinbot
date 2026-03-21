@@ -7,6 +7,7 @@ import { providers } from '@/server/db/schema'
 import { config } from '@/server/config'
 import { getEmbeddingModel } from '@/server/services/app-settings'
 import { decrypt } from '@/server/services/encryption'
+import { PROVIDER_META } from '@/shared/provider-metadata'
 
 const log = createLogger('embeddings')
 
@@ -33,20 +34,8 @@ export async function generateEmbedding(text: string): Promise<number[]> {
     model = google.embedding(embeddingModelId)
   } else {
     // Assume other configured embedding providers are OpenAI-compatible
-    let baseUrl = providerConfig.baseUrl
-
-    if (!baseUrl) {
-      if (provider.type === 'openai') baseUrl = 'https://api.openai.com/v1'
-      else if (provider.type === 'voyage') baseUrl = 'https://api.voyageai.com/v1'
-      else if (provider.type === 'mistral') baseUrl = 'https://api.mistral.ai/v1'
-      else if (provider.type === 'deepseek') baseUrl = 'https://api.deepseek.com/v1'
-      else if (provider.type === 'xai') baseUrl = 'https://api.x.ai/v1'
-      else if (provider.type === 'jina') baseUrl = 'https://api.jina.ai/v1'
-      else if (provider.type === 'nomic') baseUrl = 'https://api-atlas.nomic.ai/v1'
-      else if (provider.type === 'together') baseUrl = 'https://api.together.xyz/v1'
-      else if (provider.type === 'fireworks') baseUrl = 'https://api.fireworks.ai/inference/v1'
-      else if (provider.type === 'ollama') baseUrl = 'http://localhost:11434/v1'
-    }
+    const pm = (PROVIDER_META as Record<string, { defaultBaseUrl?: string }>)[provider.type]
+    const baseUrl = providerConfig.baseUrl ?? pm?.defaultBaseUrl
 
     const openai = createOpenAI({
       apiKey: providerConfig.apiKey || 'not-needed',
