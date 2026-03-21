@@ -69,7 +69,7 @@ export interface ContactForNotification {
   platformId: string
 }
 
-export type ProviderType = 'anthropic' | 'anthropic-oauth' | 'openai' | 'gemini' | 'voyage' | 'brave-search' | 'mistral' | 'groq' | 'together' | 'fireworks' | 'deepseek' | 'ollama' | 'openrouter' | 'cohere' | 'xai' | 'tavily' | 'jina' | 'nomic' | 'replicate' | 'stability' | 'fal' | 'serper' | 'perplexity'
+export type ProviderType = 'anthropic' | 'anthropic-oauth' | 'openai' | 'gemini' | 'voyage' | 'brave-search' | 'mistral' | 'groq' | 'together' | 'fireworks' | 'deepseek' | 'ollama' | 'openrouter' | 'cohere' | 'xai' | 'tavily' | 'jina' | 'nomic' | 'replicate' | 'stability' | 'fal' | 'serper' | 'perplexity' | 'searxng'
 
 export type ProviderCapability = 'llm' | 'embedding' | 'image' | 'search' | 'rerank'
 

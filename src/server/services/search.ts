@@ -44,6 +44,16 @@ interface TavilySearchResponse {
   results?: TavilyResult[]
 }
 
+interface SearxngResult {
+  title: string
+  url: string
+  content?: string
+}
+
+interface SearxngSearchResponse {
+  results?: SearxngResult[]
+}
+
 /**
  * Resolve which search provider to use for a given Kin.
  * Priority: Kin override → global default → first valid search provider.
@@ -126,6 +136,10 @@ export async function webSearch(
 
   if (searchProvider.type === 'tavily') {
     return executeTavilySearch(providerConfig, query, options)
+  }
+
+  if (searchProvider.type === 'searxng') {
+    return executeSearxngSearch(providerConfig, query, options)
   }
 
   throw new Error(`Unsupported search provider type: ${searchProvider.type}`)
@@ -225,5 +239,49 @@ async function executeTavilySearch(
     title: r.title,
     url: r.url,
     description: r.content,
+  }))
+}
+
+async function executeSearxngSearch(
+  config: { apiKey: string; baseUrl?: string },
+  query: string,
+  options?: { count?: number; freshness?: string },
+): Promise<SearchResult[]> {
+  const baseUrl = config.baseUrl ?? 'http://localhost:8080'
+  const url = baseUrl.replace(/\/$/, '')
+  
+  const params = new URLSearchParams()
+  params.append('q', query)
+  params.append('format', 'json')
+  
+  if (options?.freshness) {
+    const timeRanges: Record<string, string> = { pd: 'day', pw: 'week', pm: 'month', py: 'year' }
+    if (timeRanges[options.freshness]) {
+      params.append('time_range', timeRanges[options.freshness])
+    }
+  }
+
+  const response = await fetch(`${url}/search?${params.toString()}`, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    const text = await response.text()
+    throw new Error(`SearxNG API error (${response.status}): ${text.substring(0, 100)}`)
+  }
+
+  const data = (await response.json()) as SearxngSearchResponse
+  const results = data.results ?? []
+
+  const count = options?.count ?? 5
+  const limited = results.slice(0, count)
+
+  return limited.map((r) => ({
+    title: r.title,
+    url: r.url,
+    description: r.content ?? '',
   }))
 }

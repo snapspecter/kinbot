@@ -39,7 +39,8 @@ export const PROVIDER_META = {
   stability:          { capabilities: ['image'],                      displayName: 'Stability AI',          apiKeyUrl: 'https://platform.stability.ai/account/keys' },
   fal:                { capabilities: ['image'],                      displayName: 'fal.ai',                apiKeyUrl: 'https://fal.ai/dashboard/keys' },
   serper:             { capabilities: ['search'],                     displayName: 'Serper',                apiKeyUrl: 'https://serper.dev/api-key' },
-  perplexity:         { capabilities: ['llm', 'search'],              displayName: 'Perplexity',            apiKeyUrl: 'https://www.perplexity.ai/settings/api' },
+  perplexity:         { capabilities: ['llm', 'search'],              displayName: 'Perplexity',            apiKeyUrl: 'https://www.perplexity.ai/settings/api', defaultBaseUrl: 'https://api.perplexity.ai' },
+  searxng:            { capabilities: ['search'],                     displayName: 'SearxNG',               noApiKey: true, apiKeyUrl: 'https://searx.space/' },
 } as const satisfies Record<string, ProviderMeta>
 
 export type ProviderType = keyof typeof PROVIDER_META

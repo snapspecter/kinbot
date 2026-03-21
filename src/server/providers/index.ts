@@ -25,6 +25,7 @@ import { stabilityProvider } from '@/server/providers/stability'
 import { falProvider } from '@/server/providers/fal'
 import { serperProvider } from '@/server/providers/serper'
 import { perplexityProvider } from '@/server/providers/perplexity'
+import { searxngProvider } from '@/server/providers/searxng'
 
 const log = createLogger('providers')
 
@@ -52,6 +53,7 @@ const builtinRegistry: Record<string, ProviderDefinition> = {
   fal: falProvider,
   serper: serperProvider,
   perplexity: perplexityProvider,
+  searxng: searxngProvider,
 }
 
 // Dynamic registry for plugin-provided providers
